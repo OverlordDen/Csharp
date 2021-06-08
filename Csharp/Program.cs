@@ -8,28 +8,26 @@ namespace Csharp
 {
     class Program
     {
+        static AutoResetEvent waitHandler = new AutoResetEvent(true);
+        static List<char> sharp = new List<char>() { 'C', 's', 'h', 'a', 'r', 'p' };
         static void Main(string[] args)
         {
-            ParallelOptions options = new ParallelOptions();
-            options.MaxDegreeOfParallelism = 1;
-            var sharp = new List<string>() { "C", "s", "h", "a", "r", "p" };
-            try
+
+            for (int i = 0; i < sharp.Count; i++)
             {
-                Parallel.For(
-                        0,
-                        6,
-                        options,
-                        (i) =>
-                        {
-                            Console.WriteLine("{0}", sharp[i]);
-                        }
-                    );
+                Thread myThread = new Thread(Count);
+                myThread.Name = $"{i}";
+                myThread.Start(sharp[i]);
             }
-            catch (AggregateException e)
-            {
-                Console.WriteLine("Parallel.For has thrown the following (unexpected) exception:\n{0}", e);
-            }
-            
+
+            Console.ReadLine();
+        }
+        public static void Count(object letter)
+        {
+            if (Convert.ToInt32(Thread.CurrentThread.Name) > 0)
+            waitHandler.WaitOne(3000, letter.ToString().StartsWith(sharp[Convert.ToInt32(Thread.CurrentThread.Name) - 1]));
+            Console.WriteLine($"{Thread.CurrentThread.Name}: {letter}");
+            waitHandler.Set();
         }
     }
 }
