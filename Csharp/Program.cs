@@ -8,9 +8,8 @@ namespace Csharp
 {
     class Program
     {
-        static async void Print()
-        {
-            List<char> sharp = new List<char>() { 'C', 's', 'h', 'a', 'r', 'p' };
+        static async void Print(List<char> sharp)
+        {  
             foreach (var letter in sharp)
             {
                 await Task.Factory.StartNew(() => Console.WriteLine(letter));
@@ -18,7 +17,8 @@ namespace Csharp
         }
         static void Main(string[] args)
         {
-            Print();
+            List<char> sharp = new List<char>() { 'C', 's', 'h', 'a', 'r', 'p' };
+            var task = Task.Factory.StartNew(() => Print(sharp));
             Console.Read();
         }
     }
